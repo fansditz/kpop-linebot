@@ -1,0 +1,74 @@
+[
+  {
+    "category": "girl",
+    "name": "aespa",
+    "koreanName": "에스파",
+    "debutDate": "2020-11-17",
+    "company": "SM Entertainment",
+    "fandom": "MY",
+    "members": ["Karina", "Giselle", "Winter", "Ningning"],
+    "representativeColor": "Aurora / Cyber blue",
+    "mbti": "Karina ENFP, Winter ISFP",
+    "officialUrl": "https://www.instagram.com/aespa_official/"
+  },
+  {
+    "category": "girl",
+    "name": "IVE",
+    "koreanName": "아이브",
+    "debutDate": "2021-12-01",
+    "company": "STARSHIP Entertainment",
+    "fandom": "DIVE",
+    "members": ["Gaeul", "Yujin", "Rei", "Wonyoung", "Liz", "Leeseo"],
+    "representativeColor": "Royal blue / pink",
+    "mbti": "Yujin ISTP, Wonyoung ENTJ",
+    "officialUrl": "https://www.instagram.com/ivestarship/"
+  },
+  {
+    "category": "girl",
+    "name": "LE SSERAFIM",
+    "koreanName": "르세라핌",
+    "debutDate": "2022-05-02",
+    "company": "SOURCE MUSIC",
+    "fandom": "FEARNOT",
+    "members": ["Sakura", "Chaewon", "Yunjin", "Kazuha", "Eunchae"],
+    "representativeColor": "Fearless blue / black",
+    "mbti": "Chaewon ISTP, Yunjin ENFJ",
+    "officialUrl": "https://www.instagram.com/le_sserafim/"
+  },
+  {
+    "category": "boy",
+    "name": "SEVENTEEN",
+    "koreanName": "세븐틴",
+    "debutDate": "2015-05-26",
+    "company": "PLEDIS Entertainment",
+    "fandom": "CARAT",
+    "members": ["S.Coups", "Jeonghan", "Joshua", "Jun", "Hoshi", "Wonwoo", "Woozi", "DK", "Mingyu", "The8", "Seungkwan", "Vernon", "Dino"],
+    "representativeColor": "Rose Quartz / Serenity",
+    "mbti": "Hoshi INFP, Mingyu ENFJ",
+    "officialUrl": "https://www.instagram.com/saythename_17/"
+  },
+  {
+    "category": "boy",
+    "name": "TXT",
+    "koreanName": "투모로우바이투게더",
+    "debutDate": "2019-03-04",
+    "company": "BIGHIT MUSIC",
+    "fandom": "MOA",
+    "members": ["Soobin", "Yeonjun", "Beomgyu", "Taehyun", "Huening Kai"],
+    "representativeColor": "Mint / sky blue",
+    "mbti": "Soobin ISFP, Yeonjun ENFP",
+    "officialUrl": "https://www.instagram.com/txt_bighit/"
+  },
+  {
+    "category": "boy",
+    "name": "RIIZE",
+    "koreanName": "라이즈",
+    "debutDate": "2023-09-04",
+    "company": "SM Entertainment",
+    "fandom": "BRIIZE",
+    "members": ["Shotaro", "Eunseok", "Sungchan", "Wonbin", "Sohee", "Anton"],
+    "representativeColor": "Sunrise orange / black",
+    "mbti": "Wonbin ISTJ, Anton INTP",
+    "officialUrl": "https://www.instagram.com/riize_official/"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "artist": "aespa",
+    "member": "Winter",
+    "color": "#7AA7D9",
+    "message": "今天適合用清爽直球感處理所有待辦。",
+    "selfieIdea": "手拿透明水杯，背景留一點藍色光。",
+    "caption": "soft focus, strong heart.",
+    "imageUrl": "https://dummyimage.com/1200x780/E9EEF5/222222.png&text=WINTER"
+  },
+  {
+    "artist": "IVE",
+    "member": "Wonyoung",
+    "color": "#D88CA8",
+    "message": "今天的關鍵字是自信，鏡頭感直接開滿。",
+    "selfieIdea": "半側臉加手指愛心，色調偏粉。",
+    "caption": "main character mood only.",
+    "imageUrl": "https://dummyimage.com/1200x780/F6E3EB/222222.png&text=WONYOUNG"
+  },
+  {
+    "artist": "SEVENTEEN",
+    "member": "Hoshi",
+    "color": "#91C7B1",
+    "message": "今天適合主動一點，幸運會被你叫醒。",
+    "selfieIdea": "比 V 或虎爪手勢，搭配暖色濾鏡。",
+    "caption": "energy up, worries down.",
+    "imageUrl": "https://dummyimage.com/1200x780/E4F3EC/222222.png&text=HOSHI"
+  },
+  {
+    "artist": "TXT",
+    "member": "Yeonjun",
+    "color": "#80A8A8",
+    "message": "今天穿搭和靈感都會比平常更有存在感。",
+    "selfieIdea": "鏡子自拍，保留一點街頭感。",
+    "caption": "new day, new frame.",
+    "imageUrl": "https://dummyimage.com/1200x780/E3F1F1/222222.png&text=YEONJUN"
+  }
+]

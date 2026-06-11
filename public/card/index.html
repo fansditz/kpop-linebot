@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程設專案 - 今日抽卡</title>
+    <style>
+        /* 網頁基礎樣式 - 換成淺紫色漸層 */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #e8dbfc, #f8f0fe);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #4a4255; /* 帶有一點點紫感的深灰色 */
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #9325e1; /* 質感深紫色 */
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(123, 31, 162, 0.1);
+        }
+
+        p {
+            font-size: 1rem;
+            color: #7e57c2; /* 溫柔的紫羅蘭色 */
+            margin-bottom: 25px;
+        }
+
+        /* 3D 翻牌卡片容器 */
+        .card-container {
+            width: 280px;
+            height: 420px;
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
+        /* 卡片本體 */
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(123, 31, 162, 0.15); /* 紫色系陰影 */
+            border-radius: 15px;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 卡片背面 - 換成浪漫丁香紫漸層 */
+        .card-back {
+            background: linear-gradient(45deg, #b388ff, #ea80fc);
+            border: 5px solid #fff;
+            box-sizing: border-box;
+        }
+
+        .card-back .logo {
+            font-size: 4rem;
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+
+        /* 卡片正面 */
+        .card-front {
+            background-color: #fff;
+            transform: rotateY(180deg);
+            border: 5px solid #fff;
+            box-sizing: border-box;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 防止愛豆照片變形 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .card-name {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.93);
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #7b1fa2; /* 名字改為深紫色 */
+            border-top: 1px solid #f3e5f5;
+        }
+
+        /* 按鈕樣式 - 換成紫色系 */
+        .btn {
+            background: #c27df0;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(147, 73, 225, 0.4);
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #bc7dcf;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #e0e0e0;
+            color: #9e9e9e;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>✨ 今日本命抽卡 ✨</h1>
+    <p id="status-text">每天限定抽卡一次，看看你今天的守護愛豆是誰吧！</p>
+
+    <div class="card-container">
+        <div class="card" id="card" onclick="drawCard()">
+            <div class="card-face card-back">
+                <div class="logo">✨</div>
+            </div>
+            <div class="card-face card-front">
+                <img id="card-img" src="" alt="愛豆小卡">
+                <div class="card-name" id="card-name">愛豆名字</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn" id="draw-btn" onclick="drawCard()">開始抽卡</button>
+
+    <script>
+        // 保持原本正確的 VS Code 本機路徑與副檔名
+        const idolDatabase = [
+            { name: "子瑜", image: "./image/子瑜.jpg" },
+            { name: "多賢", image: "./image/多賢.jpg" },
+            { name: "志效", image: "./image/志效.jpg" },
+            { name: "定延", image: "./image/定延.jpg" },
+            { name: "娜璉", image: "./image/娜璉.jpg" },
+            { name: "彩英", image: "./image/彩英.jpg" },
+            { name: "Mina", image: "./image/mina.jpg" },
+            { name: "Momo", image: "./image/momo.jpeg" }, // 保持原本的 .jpeg
+            { name: "Sana", image: "./image/sana.jpg" }
+        ];
+
+        // 取得今天的日期字串
+        function getTodayDateString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // 網頁一載入，先檢查今天是不是已經抽過卡了 (localStorage 機制保持不變)
+        window.onload = function() {
+            const lastDrawDate = localStorage.getItem('lastDrawDate');
+            const todayDate = getTodayDateString();
+
+            if (lastDrawDate === todayDate) {
+                document.getElementById('draw-btn').disabled = true;
+                document.getElementById('status-text').innerText = "❌ 你今天已經抽過卡囉！明天再來看本命吧！";
+                
+                const savedIdol = JSON.parse(localStorage.getItem('lastDrawIdol'));
+                if (savedIdol) {
+                    document.getElementById('card-img').src = savedIdol.image;
+                    document.getElementById('card-name').innerText = `今日神仙本命：${savedIdol.name}`;
+                    document.getElementById('card').classList.add('is-flipped');
+                }
+            }
+        };
+
+        function drawCard() {
+            const card = document.getElementById('card');
+            const cardImg = document.getElementById('card-img');
+            const cardName = document.getElementById('card-name');
+            const drawBtn = document.getElementById('draw-btn');
+            const statusText = document.getElementById('status-text');
+
+            const todayDate = getTodayDateString();
+            const lastDrawDate = localStorage.getItem('lastDrawDate');
+
+            if (lastDrawDate === todayDate) {
+                alert("一天只能抽一次喔！");
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * idolDatabase.length);
+            const luckyIdol = idolDatabase[randomIndex];
+
+            cardImg.src = luckyIdol.image;
+            cardName.innerText = `今日神仙本命：${luckyIdol.name}`;
+
+            card.classList.add('is-flipped');
+
+            localStorage.setItem('lastDrawDate', todayDate);
+            localStorage.setItem('lastDrawIdol', JSON.stringify(luckyIdol));
+
+            drawBtn.disabled = true;
+            statusText.innerText = "🎉 抽卡成功！期待你明天的本命運勢！";
+        }
+    </script>
+
+</body>
+</html>

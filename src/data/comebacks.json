@@ -1,0 +1,44 @@
+[
+  {
+    "section": "monthly",
+    "date": "06/03",
+    "artist": "aespa",
+    "title": "Armageddon Special Stage",
+    "type": "Music show"
+  },
+  {
+    "section": "monthly",
+    "date": "06/10",
+    "artist": "IVE",
+    "title": "I AM Tour Live Clip",
+    "type": "Video"
+  },
+  {
+    "section": "monthly",
+    "date": "06/17",
+    "artist": "SEVENTEEN",
+    "title": "Unit Single",
+    "type": "Digital single"
+  },
+  {
+    "section": "upcoming",
+    "date": "06/24",
+    "artist": "TXT",
+    "title": "The Star Chapter",
+    "type": "Mini album"
+  },
+  {
+    "section": "upcoming",
+    "date": "06/28",
+    "artist": "LE SSERAFIM",
+    "title": "Hot Summer Remix",
+    "type": "Single"
+  },
+  {
+    "section": "weekly",
+    "date": "本週五",
+    "artist": "RIIZE",
+    "title": "Performance Video",
+    "type": "YouTube"
+  }
+]

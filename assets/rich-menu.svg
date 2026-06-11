@@ -1,0 +1,98 @@
+<svg width="2500" height="1686" viewBox="0 0 2500 1686" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="2500" height="1686" fill="#F7F5EF"/>
+  <rect x="95" y="95" width="2310" height="1496" rx="100" stroke="#B9B4AA" stroke-width="18"/>
+  <rect x="135" y="135" width="2230" height="1416" rx="82" stroke="#D4CEC3" stroke-width="8"/>
+
+  <g transform="translate(255 220)">
+    <rect width="570" height="520" rx="66" fill="#C8C2B8"/>
+    <g stroke="#171717" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M300 130c-28-46-94-28-112 22-17 48 1 103 44 126"/>
+      <path d="M260 110c-44 28-74 83-68 148"/>
+      <path d="M282 120c42 30 54 86 48 142"/>
+      <path d="M238 216c34 28 72 28 112 0"/>
+      <path d="M236 296l-38 114"/>
+      <path d="M334 296l50 112"/>
+      <path d="M214 410l-34 66"/>
+      <path d="M374 406l54 62"/>
+      <path d="M190 336l-74 42"/>
+      <path d="M116 378l-36 128"/>
+      <path d="M80 506l92 38"/>
+      <path d="M172 544l38-126"/>
+      <path d="M356 336l86 20"/>
+      <path d="M274 188h4"/>
+      <path d="M324 188h4"/>
+      <path d="M286 230c17 15 36 15 54 0"/>
+    </g>
+    <text x="285" y="455" text-anchor="middle" font-family="Arial, 'Microsoft JhengHei', sans-serif" font-size="78" font-weight="700" fill="#111111">女團</text>
+  </g>
+
+  <g transform="translate(965 220)">
+    <rect width="570" height="520" rx="66" fill="#C8C2B8"/>
+    <g stroke="#171717" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M210 142c36-50 128-58 172-10 35 38 26 110-17 142-42 32-108 28-148-8-38-34-42-84-7-124z"/>
+      <path d="M226 190c50 28 108 26 164-6"/>
+      <path d="M282 222h4"/>
+      <path d="M348 222h4"/>
+      <path d="M302 260c20 12 42 10 62-4"/>
+      <path d="M284 306l-72 88"/>
+      <path d="M332 306l90 28"/>
+      <path d="M420 330l88-72"/>
+      <path d="M510 178l-44 80"/>
+      <path d="M466 258l70 6"/>
+      <path d="M274 392l-18 94"/>
+      <path d="M366 390l24 94"/>
+      <path d="M254 486h-74"/>
+      <path d="M390 484h76"/>
+    </g>
+    <text x="285" y="455" text-anchor="middle" font-family="Arial, 'Microsoft JhengHei', sans-serif" font-size="78" font-weight="700" fill="#111111">男團</text>
+  </g>
+
+  <g transform="translate(1675 220)">
+    <rect width="570" height="520" rx="66" fill="#C8C2B8"/>
+    <g stroke="#171717" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="248" cy="210" r="112"/>
+      <circle cx="248" cy="210" r="78"/>
+      <path d="M328 292l128 128"/>
+      <path d="M424 386l60-60 84 84-60 60z"/>
+    </g>
+    <text x="285" y="455" text-anchor="middle" font-family="Arial, 'Microsoft JhengHei', sans-serif" font-size="70" font-weight="700" fill="#111111">關鍵字搜尋</text>
+  </g>
+
+  <g transform="translate(255 945)">
+    <rect width="570" height="520" rx="66" fill="#C8C2B8"/>
+    <g stroke="#171717" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M145 144l210-58 92 334-210 58z"/>
+      <path d="M210 112l218 50-78 340-218-50z"/>
+      <path d="M290 244c0-42 28-78 72-78s72 32 72 70c0 32-18 52-46 68-24 14-34 28-34 54"/>
+      <path d="M354 414h2"/>
+    </g>
+    <text x="285" y="455" text-anchor="middle" font-family="Arial, 'Microsoft JhengHei', sans-serif" font-size="78" font-weight="700" fill="#111111">今日抽卡</text>
+  </g>
+
+  <g transform="translate(965 945)">
+    <rect width="570" height="520" rx="66" fill="#C8C2B8"/>
+    <g stroke="#171717" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M142 170h286c38 0 68 30 68 68v196c0 38-30 68-68 68H142c-38 0-68-30-68-68V238c0-38 30-68 68-68z"/>
+      <path d="M74 272h422"/>
+      <path d="M174 116v108"/>
+      <path d="M284 116v108"/>
+      <path d="M394 116v108"/>
+      <path d="M154 340h260"/>
+      <path d="M154 406h260"/>
+      <path d="M222 306v150"/>
+      <path d="M318 306v150"/>
+      <path d="M410 304l36 38 62-86"/>
+    </g>
+    <text x="285" y="455" text-anchor="middle" font-family="Arial, 'Microsoft JhengHei', sans-serif" font-size="78" font-weight="700" fill="#111111">回歸日期</text>
+  </g>
+
+  <g transform="translate(1675 945)">
+    <rect width="570" height="520" rx="66" fill="#C8C2B8"/>
+    <g stroke="#171717" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M214 318l-44 44c-60 60-60 158 0 218 60 60 158 60 218 0l64-64c60-60 60-158 0-218-22-22-50-36-80-42"/>
+      <path d="M356 198l44-44c60-60 158-60 218 0 60 60 60 158 0 218l-64 64c-60 60-158 60-218 0-22-22-36-50-42-80"/>
+      <path d="M250 500l250-250"/>
+    </g>
+    <text x="285" y="455" text-anchor="middle" font-family="Arial, 'Microsoft JhengHei', sans-serif" font-size="78" font-weight="700" fill="#111111">其他連結</text>
+  </g>
+</svg>

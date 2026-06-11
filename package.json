@@ -1,0 +1,25 @@
+{
+  "name": "hanqing-linebot",
+  "version": "1.0.0",
+  "description": "K-POP LINE Bot \"韓情脈脈\" with comeback lookup, idol profiles, keyword search, and daily photocard draw.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "richmenu:create": "node scripts/create-rich-menu.js"
+  },
+  "keywords": [
+    "linebot",
+    "kpop",
+    "rich-menu"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@line/bot-sdk": "^9.8.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
