@@ -194,24 +194,6 @@ function formatSearchFallback(keyword, matchedGroups, matchedComebacks) {
   return lines.join("\n");
 }
 
-  const crawlerResult = await crawlWithMake({
-    action: "comeback_group",
-    query: cleanGroupName,
-    group: cleanGroupName,
-  });
-
-  if (crawlerResult) {
-    return textMessage(crawlerResult);
-  }
-
-  const matchedComebacks = searchComebacks(cleanGroupName);
-  if (matchedComebacks.length === 0) {
-    return textMessage(`目前找不到「${cleanGroupName}」的回歸日期。`);
-  }
-
-  return textMessage(formatComebacks(`「${cleanGroupName}」回歸日期`, matchedComebacks));
-
-
 async function comebackAllMessage() {
   return textMessage(formatComebacks("2026年6、7月近期回歸資訊", comebacks));
 }
