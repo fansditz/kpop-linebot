@@ -86,11 +86,6 @@ async function buildReply(text, req, userId) {
     return keywordSearchMessage(text);
   }
 
-  if (session?.mode === "awaiting-comeback-group") {
-    userSessions.delete(userId);
-    return comebackGroupMessage(text);
-  }
-
   if (matches(text, [MENU.KEYWORD_SEARCH, "keyword", "search"])) {
     userSessions.set(userId, { mode: "awaiting-keyword" });
     return textMessage("想查詢什麼呢？");
@@ -100,7 +95,7 @@ async function buildReply(text, req, userId) {
     return photocardMessage(req);
   }
 
-    if (matches(text, [
+  if (matches(text, [
     MENU.COMEBACKS,
     "comeback",
     "comebacks",
@@ -118,8 +113,10 @@ async function buildReply(text, req, userId) {
   const searchKeyword = stripSearchPrefix(text);
   if (searchKeyword !== text || /^(keyword|search)\s+/i.test(text)) {
     return keywordSearchMessage(searchKeyword);
-      return null;
   }
+
+  return null;
+}
 
 function matches(text, keywords) {
   const lower = text.toLowerCase();
@@ -197,12 +194,6 @@ function formatSearchFallback(keyword, matchedGroups, matchedComebacks) {
   return lines.join("\n");
 }
 
-async function comebackGroupMessage(groupName) {
-  const cleanGroupName = groupName.trim();
-  if (!cleanGroupName) {
-    return textMessage("請輸入想查詢的團體名稱");
-  }
-
   const crawlerResult = await crawlWithMake({
     action: "comeback_group",
     query: cleanGroupName,
@@ -219,7 +210,7 @@ async function comebackGroupMessage(groupName) {
   }
 
   return textMessage(formatComebacks(`「${cleanGroupName}」回歸日期`, matchedComebacks));
-}
+
 
 async function comebackAllMessage() {
   return textMessage(formatComebacks("2026年6、7月近期回歸資訊", comebacks));
