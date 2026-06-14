@@ -7,7 +7,6 @@
     "company": "SM Entertainment",
     "fandom": "MY",
     "members": ["Karina", "Giselle", "Winter", "Ningning"],
-    "representativeColor": "Aurora / Cyber blue",
     "mbti": "Karina ENFP, Winter ISFP",
     "officialUrl": "https://www.instagram.com/aespa_official/"
   },
@@ -19,7 +18,6 @@
     "company": "STARSHIP Entertainment",
     "fandom": "DIVE",
     "members": ["Gaeul", "Yujin", "Rei", "Wonyoung", "Liz", "Leeseo"],
-    "representativeColor": "Royal blue / pink",
     "mbti": "Yujin ISTP, Wonyoung ENTJ",
     "officialUrl": "https://www.instagram.com/ivestarship/"
   },
@@ -31,7 +29,6 @@
     "company": "SOURCE MUSIC",
     "fandom": "FEARNOT",
     "members": ["Sakura", "Chaewon", "Yunjin", "Kazuha", "Eunchae"],
-    "representativeColor": "Fearless blue / black",
     "mbti": "Chaewon ISTP, Yunjin ENFJ",
     "officialUrl": "https://www.instagram.com/le_sserafim/"
   },
@@ -43,7 +40,6 @@
     "company": "PLEDIS Entertainment",
     "fandom": "CARAT",
     "members": ["S.Coups", "Jeonghan", "Joshua", "Jun", "Hoshi", "Wonwoo", "Woozi", "DK", "Mingyu", "The8", "Seungkwan", "Vernon", "Dino"],
-    "representativeColor": "Rose Quartz / Serenity",
     "mbti": "Hoshi INFP, Mingyu ENFJ",
     "officialUrl": "https://www.instagram.com/saythename_17/"
   },
@@ -55,20 +51,18 @@
     "company": "BIGHIT MUSIC",
     "fandom": "MOA",
     "members": ["Soobin", "Yeonjun", "Beomgyu", "Taehyun", "Huening Kai"],
-    "representativeColor": "Mint / sky blue",
     "mbti": "Soobin ISFP, Yeonjun ENFP",
     "officialUrl": "https://www.instagram.com/txt_bighit/"
   },
   {
     "category": "boy",
-    "name": "RIIZE",
-    "koreanName": "라이즈",
-    "debutDate": "2023-09-04",
-    "company": "SM Entertainment",
-    "fandom": "BRIIZE",
-    "members": ["Shotaro", "Eunseok", "Sungchan", "Wonbin", "Sohee", "Anton"],
-    "representativeColor": "Sunrise orange / black",
-    "mbti": "Wonbin ISTJ, Anton INTP",
-    "officialUrl": "https://www.instagram.com/riize_official/"
+    "name": "CORTIS",
+    "koreanName": "코르티스",
+    "debutDate": "2025-08-18",
+    "company": "BIGHIT MUSIC",
+    "fandom": "COER",
+    "members": ["JAMES", "JUHOON", "MARTIN", "SEONGHYEON", "KEONHO"],
+    "mbti": "JAMES INTP, JUHOON ISFP, MARTIN INFP, SEONGHYEON INTP, KEONHO INTP",
+    "officialUrl": "https://www.instagram.com/cortis/"
   }
 ]
