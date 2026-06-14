@@ -100,13 +100,14 @@ async function buildReply(text, req, userId) {
     return photocardMessage(req);
   }
 
-  if (matches(text, [MENU.COMEBACKS, "comeback", "comebacks", "回歸"])) {
-  return comebackAllMessage();
-  }
-
-  }
-
-  if (matches(text, ["查詢所有團體回歸日期"])) {
+    if (matches(text, [
+    MENU.COMEBACKS,
+    "comeback",
+    "comebacks",
+    "回歸",
+    "查詢所有團體",
+    "查詢所有團體回歸日期"
+  ])) {
     return comebackAllMessage();
   }
 
@@ -117,6 +118,7 @@ async function buildReply(text, req, userId) {
   const searchKeyword = stripSearchPrefix(text);
   if (searchKeyword !== text || /^(keyword|search)\s+/i.test(text)) {
     return keywordSearchMessage(searchKeyword);
+      return null;
   }
 
 function matches(text, keywords) {
