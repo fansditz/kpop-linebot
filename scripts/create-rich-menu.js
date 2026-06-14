@@ -29,14 +29,14 @@ const richMenu = {
 
 function area(x, y, width, height, text) {
   const action =
-    text === "今日抽卡" && process.env.PUBLIC_BASE_URL
+    text === "今日抽卡" && cardPageUrl()
       ? {
           type: "uri",
           uri: cardPageUrl(),
         }
       : {
           type: "message",
-          text: text === "關鍵字搜尋" ? "搜尋 aespa" : text,
+          text,
         };
 
   return {
@@ -46,14 +46,32 @@ function area(x, y, width, height, text) {
 }
 
 function cardPageUrl() {
-  return `${process.env.PUBLIC_BASE_URL.replace(/\/$/, "")}/card/`;
+  const baseUrl = normalizeBaseUrl(process.env.PUBLIC_BASE_URL);
+  if (!baseUrl) {
+    return null;
+  }
+
+  return `${baseUrl}/card/`;
+}
+
+function normalizeBaseUrl(value) {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim().replace(/\/$/, "");
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return null;
+  }
+
+  return trimmed;
 }
 
 async function main() {
   const imagePath = path.resolve(__dirname, "../assets/rich-menu.png");
 
   if (!fs.existsSync(imagePath)) {
-    throw new Error("找不到 assets/rich-menu.png。請先把 assets/rich-menu.svg 轉成 PNG。");
+    throw new Error("找不到 assets/rich-menu.png，請先確認主選單圖檔存在。");
   }
 
   const richMenuId = await client.createRichMenu(richMenu);

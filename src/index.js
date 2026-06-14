@@ -10,6 +10,8 @@ const links = require("./data/links.json");
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.set("trust proxy", true);
+
 const lineConfig = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.LINE_CHANNEL_SECRET,
@@ -29,7 +31,7 @@ app.get("/", (_req, res) => {
 
 app.post("/webhook", line.middleware(lineConfig), async (req, res) => {
   try {
-    await Promise.all(req.body.events.map(handleEvent));
+    await Promise.all(req.body.events.map((event) => handleEvent(event, req)));
     res.status(200).end();
   } catch (error) {
     console.error(error);
@@ -37,13 +39,18 @@ app.post("/webhook", line.middleware(lineConfig), async (req, res) => {
   }
 });
 
-async function handleEvent(event) {
+async function handleEvent(event, req) {
   if (event.type !== "message" || event.message.type !== "text") {
     return null;
   }
 
   const text = normalize(event.message.text);
-  const reply = buildReply(text);
+  const reply = buildReply(text, req);
+
+  if (!reply) {
+    return null;
+  }
+
   return client.replyMessage(event.replyToken, reply);
 }
 
@@ -51,25 +58,25 @@ function normalize(text) {
   return text.trim().replace(/\s+/g, " ");
 }
 
-function buildReply(text) {
+function buildReply(text, req) {
   if (matches(text, ["女團", "girl", "girls", "女團查詢"])) {
-    return groupCarousel("girl");
+    return null;
   }
 
   if (matches(text, ["男團", "boy", "boys", "男團查詢"])) {
-    return groupCarousel("boy");
+    return null;
   }
 
   if (matches(text, ["關鍵字搜尋", "搜尋", "查詢", "keyword"])) {
     return keywordHelpMessage();
   }
 
-  if (matches(text, ["回歸日期", "回歸", "comeback", "本月回歸"])) {
+  if (matches(text, ["回歸日期", "回歸", "comeback", "韓星回歸"])) {
     return comebackMessage();
   }
 
   if (matches(text, ["今日抽卡", "抽小卡", "小卡", "抽卡"])) {
-    return photocardMessage();
+    return photocardMessage(req);
   }
 
   if (matches(text, ["其他連結", "連結", "官方連結", "links"])) {
@@ -91,7 +98,7 @@ function buildReply(text) {
 function keywordHelpMessage() {
   return {
     type: "text",
-    text: "請輸入「搜尋 + 關鍵字」，例如：\n搜尋 aespa\n搜尋 Winter\n搜尋 SM Entertainment\n搜尋 CARAT",
+    text: "請輸入「搜尋 + 關鍵字」查詢團體、成員、公司或粉絲名。\n\n搜尋 aespa\n搜尋 Winter\n搜尋 SM Entertainment\n搜尋 CARAT",
   };
 }
 
@@ -113,7 +120,7 @@ function welcomeMessage() {
         spacing: "md",
         contents: [
           textBox("韓情脈脈", "xxl", true),
-          textBox("想追回歸、查團體資料，或抽一張今日小卡，都可以從下方開始。", "sm", false),
+          textBox("選擇想查詢的 K-POP 資訊，或直接輸入團體、成員、公司與粉絲名。", "sm", false),
           quickMenu(),
         ],
       },
@@ -134,7 +141,7 @@ function quickMenu() {
       action: {
         type: "message",
         label,
-        text: label === "關鍵字搜尋" ? "搜尋 aespa" : label,
+        text: label,
       },
     })),
   };
@@ -200,7 +207,7 @@ function searchMessage(keyword) {
   if (matchedGroups.length === 0 && matchedComebacks.length === 0) {
     return {
       type: "text",
-      text: `找不到「${keyword}」相關資料。可以試試團名、成員名、粉絲名或公司名稱。`,
+      text: `找不到「${keyword}」的資料，可以換團名、成員名、公司或粉絲名再試一次。`,
     };
   }
 
@@ -252,8 +259,8 @@ function comebackMessage() {
         contents: [
           textBox("回歸日期", "xl", true),
           comebackSection("本月回歸清單", monthly),
-          comebackSection("團體預計發片日期", upcoming),
-          comebackSection("當週新歌發表", weekly),
+          comebackSection("即將回歸", upcoming),
+          comebackSection("本週音樂節目", weekly),
         ],
       },
     },
@@ -272,8 +279,15 @@ function comebackSection(title, items) {
   };
 }
 
-function photocardMessage() {
-  const url = cardPageUrl();
+function photocardMessage(req) {
+  const url = cardPageUrl(req);
+
+  if (!url) {
+    return {
+      type: "text",
+      text: "今日抽卡需要公開網址才能在 LINE 裡開啟。請先啟動 tunnel，或在 .env 設定 PUBLIC_BASE_URL。",
+    };
+  }
 
   return {
     type: "flex",
@@ -303,9 +317,38 @@ function photocardMessage() {
   };
 }
 
-function cardPageUrl() {
-  const baseUrl = process.env.PUBLIC_BASE_URL || `http://localhost:${port}`;
-  return `${baseUrl.replace(/\/$/, "")}/card/`;
+function cardPageUrl(req) {
+  const configuredBaseUrl = normalizeBaseUrl(process.env.PUBLIC_BASE_URL);
+  if (configuredBaseUrl) {
+    return `${configuredBaseUrl}/card/`;
+  }
+
+  const forwardedHost = firstForwardedValue(req?.get("x-forwarded-host"));
+  const forwardedProto = firstForwardedValue(req?.get("x-forwarded-proto"));
+  const host = forwardedHost || req?.hostname || req?.get("host");
+  if (!host || /^localhost(:|$)|^127\.0\.0\.1(:|$)/.test(host)) {
+    return null;
+  }
+
+  const protocol = forwardedProto || (host.includes("trycloudflare.com") || host.includes("loca.lt") ? "https" : req.protocol);
+  return `${protocol}://${host}/card/`;
+}
+
+function firstForwardedValue(value) {
+  return value?.split(",")[0]?.trim();
+}
+
+function normalizeBaseUrl(value) {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim().replace(/\/$/, "");
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return null;
+  }
+
+  return trimmed;
 }
 
 function linkMessage() {
