@@ -103,15 +103,10 @@ async function buildReply(text, req, userId) {
   if (matches(text, [MENU.COMEBACKS, "comeback", "comebacks", "回歸"])) {
   return comebackAllMessage();
   }
-  
+
   }
 
-  if (matches(text, ["查詢特定團體"])) {
-    userSessions.set(userId, { mode: "awaiting-comeback-group" });
-    return textMessage("請輸入想查詢的團體名稱");
-  }
-
-  if (matches(text, ["查詢所有團體"])) {
+  if (matches(text, ["查詢所有團體回歸日期"])) {
     return comebackAllMessage();
   }
 
@@ -140,26 +135,6 @@ function textMessage(text) {
   return { type: "text", text };
 }
 
-function welcomeMessage() {
-  return {
-    type: "flex",
-    altText: "K-POP 選單",
-    contents: {
-      type: "bubble",
-      size: "mega",
-      body: {
-        type: "box",
-        layout: "vertical",
-        spacing: "md",
-        contents: [
-          textBox("K-POP 選單", "xl", true),
-          textBox("請點選下方功能，或直接從圖文選單操作。", "sm", false, "#555555"),
-          quickMenu(),
-        ],
-      },
-    },
-  };
-}
 
 function quickMenu() {
   return {
@@ -182,7 +157,7 @@ function quickMenu() {
 async function keywordSearchMessage(keyword) {
   const cleanKeyword = keyword.trim();
   if (!cleanKeyword) {
-    return textMessage("想查詢內容");
+    return textMessage("想查詢什麼呢？");
   }
 
   const crawlerResult = await crawlWithMake({
@@ -221,60 +196,6 @@ function formatSearchFallback(keyword, matchedGroups, matchedComebacks) {
   });
 
   return lines.join("\n");
-}
-
-function comebackMenuMessage() {
-  return {
-    type: "flex",
-    altText: "回歸日期",
-    contents: {
-      type: "carousel",
-      contents: [
-        {
-          type: "bubble",
-          body: {
-            type: "box",
-            layout: "vertical",
-            spacing: "md",
-            contents: [
-              textBox("查詢特定團體", "xl", true),
-              textBox("輸入團體名稱後，會用 AI 爬蟲查詢該團體回歸日期。", "sm", false, "#555555"),
-              {
-                type: "button",
-                style: "primary",
-                action: {
-                  type: "message",
-                  label: "查詢特定團體",
-                  text: "查詢特定團體",
-                },
-              },
-            ],
-          },
-        },
-        {
-          type: "bubble",
-          body: {
-            type: "box",
-            layout: "vertical",
-            spacing: "md",
-            contents: [
-              textBox("查詢所有團體", "xl", true),
-              textBox("直接用 AI 爬蟲整理所有團體近期回歸日期。", "sm", false, "#555555"),
-              {
-                type: "button",
-                style: "primary",
-                action: {
-                  type: "message",
-                  label: "查詢所有團體",
-                  text: "查詢所有團體",
-                },
-              },
-            ],
-          },
-        },
-      ],
-    },
-  };
 }
 
 async function comebackGroupMessage(groupName) {
