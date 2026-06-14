@@ -4,6 +4,15 @@ const fs = require("fs");
 const path = require("path");
 const line = require("@line/bot-sdk");
 
+const MENU = {
+  GIRL_GROUPS: "女團",
+  BOY_GROUPS: "男團",
+  KEYWORD_SEARCH: "關鍵字搜尋",
+  PHOTOCARD: "今日抽卡",
+  COMEBACKS: "回歸日期",
+  LINKS: "其他連結",
+};
+
 const client = new line.Client({
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.LINE_CHANNEL_SECRET,
@@ -15,24 +24,25 @@ const richMenu = {
     height: 1686,
   },
   selected: true,
-  name: "韓情脈脈主選單",
-  chatBarText: "韓情脈脈",
+  name: "K-POP 選單",
+  chatBarText: "K-POP 選單",
   areas: [
-    area(0, 0, 833, 843, "女團"),
-    area(833, 0, 834, 843, "男團"),
-    area(1667, 0, 833, 843, "關鍵字搜尋"),
-    area(0, 843, 833, 843, "今日抽卡"),
-    area(833, 843, 834, 843, "回歸日期"),
-    area(1667, 843, 833, 843, "其他連結"),
+    area(0, 0, 833, 843, MENU.GIRL_GROUPS),
+    area(833, 0, 834, 843, MENU.BOY_GROUPS),
+    area(1667, 0, 833, 843, MENU.KEYWORD_SEARCH),
+    area(0, 843, 833, 843, MENU.PHOTOCARD),
+    area(833, 843, 834, 843, MENU.COMEBACKS),
+    area(1667, 843, 833, 843, MENU.LINKS),
   ],
 };
 
 function area(x, y, width, height, text) {
+  const cardUrl = cardPageUrl();
   const action =
-    text === "今日抽卡" && cardPageUrl()
+    text === MENU.PHOTOCARD && cardUrl
       ? {
           type: "uri",
-          uri: cardPageUrl(),
+          uri: cardUrl,
         }
       : {
           type: "message",
@@ -71,7 +81,7 @@ async function main() {
   const imagePath = path.resolve(__dirname, "../assets/rich-menu.png");
 
   if (!fs.existsSync(imagePath)) {
-    throw new Error("找不到 assets/rich-menu.png，請先確認主選單圖檔存在。");
+    throw new Error("找不到 assets/rich-menu.png，請先放入 2500 x 1686 的 rich menu 圖片。");
   }
 
   const richMenuId = await client.createRichMenu(richMenu);

@@ -1,241 +1,253 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>程設專案 - 今日抽卡</title>
-    <style>
-        /* 網頁基礎樣式 - 換成淺紫色漸層 */
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #e8dbfc, #f8f0fe);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            color: #4a4255; /* 帶有一點點紫感的深灰色 */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今日抽卡</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        h1 {
-            font-size: 2rem;
-            color: #9325e1; /* 質感深紫色 */
-            margin-bottom: 5px;
-            text-shadow: 1px 1px 2px rgba(123, 31, 162, 0.1);
-        }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      color: #25222a;
+      background:
+        radial-gradient(circle at top left, rgba(255, 160, 190, 0.32), transparent 32rem),
+        linear-gradient(135deg, #f8eef6 0%, #edf7ff 45%, #fff7e6 100%);
+    }
 
-        p {
-            font-size: 1rem;
-            color: #7e57c2; /* 溫柔的紫羅蘭色 */
-            margin-bottom: 25px;
-        }
+    main {
+      width: min(92vw, 420px);
+      padding: 28px 20px 36px;
+      text-align: center;
+    }
 
-        /* 3D 翻牌卡片容器 */
-        .card-container {
-            width: 280px;
-            height: 420px;
-            perspective: 1000px;
-            margin-bottom: 30px;
-        }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      letter-spacing: 0;
+    }
 
-        /* 卡片本體 */
-        .card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(123, 31, 162, 0.15); /* 紫色系陰影 */
-            border-radius: 15px;
-        }
+    #status-text {
+      min-height: 3rem;
+      margin: 0 0 24px;
+      color: #5d5666;
+      line-height: 1.5;
+    }
 
-        .card.is-flipped {
-            transform: rotateY(180deg);
-        }
+    .card-container {
+      width: min(76vw, 300px);
+      aspect-ratio: 2 / 3;
+      margin: 0 auto 26px;
+      perspective: 1000px;
+    }
 
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 15px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      transform-style: preserve-3d;
+      transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+      cursor: pointer;
+      box-shadow: 0 18px 38px rgba(95, 67, 93, 0.22);
+    }
 
-        /* 卡片背面 - 換成浪漫丁香紫漸層 */
-        .card-back {
-            background: linear-gradient(45deg, #b388ff, #ea80fc);
-            border: 5px solid #fff;
-            box-sizing: border-box;
-        }
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
 
-        .card-back .logo {
-            font-size: 4rem;
-            color: #fff;
-            animation: pulse 2s infinite;
-        }
+    .card-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 6px solid #ffffff;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      background: #ffffff;
+    }
 
-        /* 卡片正面 */
-        .card-front {
-            background-color: #fff;
-            transform: rotateY(180deg);
-            border: 5px solid #fff;
-            box-sizing: border-box;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
+    .card-back {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent),
+        linear-gradient(135deg, #e76f9f, #7db7e8);
+    }
 
-        .card-front img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 防止愛豆照片變形 */
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
+    .logo {
+      width: 132px;
+      height: 132px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 3.4rem;
+      font-weight: 800;
+    }
 
-        .card-name {
-            position: relative;
-            z-index: 2;
-            background: rgba(255, 255, 255, 0.93);
-            width: 100%;
-            text-align: center;
-            padding: 10px 0;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #7b1fa2; /* 名字改為深紫色 */
-            border-top: 1px solid #f3e5f5;
-        }
+    .card-front {
+      transform: rotateY(180deg);
+      align-items: flex-end;
+    }
 
-        /* 按鈕樣式 - 換成紫色系 */
-        .btn {
-            background: #c27df0;
-            color: white;
-            border: none;
-            padding: 12px 35px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 25px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(147, 73, 225, 0.4);
-            transition: all 0.2s;
-        }
+    .card-front img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-        .btn:hover {
-            background: #bc7dcf;
-            transform: translateY(-2px);
-        }
+    .card-info {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #25222a;
+    }
 
-        .btn:disabled {
-            background: #e0e0e0;
-            color: #9e9e9e;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+    #card-name {
+      margin: 0 0 4px;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.9; }
-        }
-    </style>
+    #card-message {
+      margin: 0;
+      color: #5d5666;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .btn {
+      min-width: 160px;
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 28px;
+      color: #ffffff;
+      background: #d94f86;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(217, 79, 134, 0.3);
+    }
+
+    .btn:disabled {
+      background: #cfc9d2;
+      color: #746f78;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  </style>
 </head>
 <body>
-
-    <h1>✨ 今日本命抽卡 ✨</h1>
-    <p id="status-text">每天限定抽卡一次，看看你今天的守護愛豆是誰吧！</p>
+  <main>
+    <h1>今日抽卡</h1>
+    <p id="status-text">今天會抽到哪一張小卡呢？點一下開始。</p>
 
     <div class="card-container">
-        <div class="card" id="card" onclick="drawCard()">
-            <div class="card-face card-back">
-                <div class="logo">✨</div>
-            </div>
-            <div class="card-face card-front">
-                <img id="card-img" src="" alt="愛豆小卡">
-                <div class="card-name" id="card-name">愛豆名字</div>
-            </div>
+      <div class="card" id="card" role="button" tabindex="0" aria-label="抽卡">
+        <div class="card-face card-back">
+          <div class="logo">K</div>
         </div>
+        <div class="card-face card-front">
+          <img id="card-img" src="" alt="今日小卡">
+          <div class="card-info">
+            <p id="card-name">尚未抽卡</p>
+            <p id="card-message">點擊下方按鈕開始。</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <button class="btn" id="draw-btn" onclick="drawCard()">開始抽卡</button>
+    <button class="btn" id="draw-btn" type="button">開始抽卡</button>
+  </main>
 
-    <script>
-        // 保持原本正確的 VS Code 本機路徑與副檔名
-        const idolDatabase = [
-            { name: "子瑜", image: "./image/子瑜.jpg" },
-            { name: "多賢", image: "./image/多賢.jpg" },
-            { name: "志效", image: "./image/志效.jpg" },
-            { name: "定延", image: "./image/定延.jpg" },
-            { name: "娜璉", image: "./image/娜璉.jpg" },
-            { name: "彩英", image: "./image/彩英.jpg" },
-            { name: "Mina", image: "./image/mina.jpg" },
-            { name: "Momo", image: "./image/momo.jpeg" }, // 保持原本的 .jpeg
-            { name: "Sana", image: "./image/sana.jpg" }
-        ];
+  <script>
+    const idolDatabase = [
+      { artist: "TWICE", member: "Nayeon", image: "./image/娜連.jpg", message: "今天的幸運感是明亮開場，適合把想做的事先推進一步。" },
+      { artist: "TWICE", member: "Jeongyeon", image: "./image/定延.jpg", message: "穩穩地做完一件小事，就會比想像中更靠近目標。" },
+      { artist: "TWICE", member: "Momo", image: "./image/momo.jpeg", message: "今天適合動起來，節奏會把心情帶回正軌。" },
+      { artist: "TWICE", member: "Sana", image: "./image/sana.jpg", message: "柔軟一點也很好，你的可愛能量今天很有用。" },
+      { artist: "TWICE", member: "Jihyo", image: "./image/志效.jpg", message: "把主導權拿回來，今天很適合做一個乾脆的決定。" },
+      { artist: "TWICE", member: "Mina", image: "./image/mina.jpg", message: "安靜專注會帶來好結果，照自己的步調就好。" },
+      { artist: "TWICE", member: "Dahyun", image: "./image/多賢.jpg", message: "今天的關鍵字是輕盈，別忘了給自己一點空白。" },
+      { artist: "TWICE", member: "Chaeyoung", image: "./image/彩英.jpg", message: "靈感會在不經意時出現，記得把想法留下來。" },
+      { artist: "TWICE", member: "Tzuyu", image: "./image/子瑜.jpg", message: "慢慢來也很有力量，今天適合把事情做得漂亮。" }
+    ];
 
-        // 取得今天的日期字串
-        function getTodayDateString() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
+    const card = document.getElementById("card");
+    const cardImg = document.getElementById("card-img");
+    const cardName = document.getElementById("card-name");
+    const cardMessage = document.getElementById("card-message");
+    const drawBtn = document.getElementById("draw-btn");
+    const statusText = document.getElementById("status-text");
 
-        // 網頁一載入，先檢查今天是不是已經抽過卡了 (localStorage 機制保持不變)
-        window.onload = function() {
-            const lastDrawDate = localStorage.getItem('lastDrawDate');
-            const todayDate = getTodayDateString();
+    function getTodayDateString() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
 
-            if (lastDrawDate === todayDate) {
-                document.getElementById('draw-btn').disabled = true;
-                document.getElementById('status-text').innerText = "❌ 你今天已經抽過卡囉！明天再來看本命吧！";
-                
-                const savedIdol = JSON.parse(localStorage.getItem('lastDrawIdol'));
-                if (savedIdol) {
-                    document.getElementById('card-img').src = savedIdol.image;
-                    document.getElementById('card-name').innerText = `今日神仙本命：${savedIdol.name}`;
-                    document.getElementById('card').classList.add('is-flipped');
-                }
-            }
-        };
+    function showIdol(idol) {
+      cardImg.src = idol.image;
+      cardName.innerText = `${idol.artist} ${idol.member}`;
+      cardMessage.innerText = idol.message;
+      card.classList.add("is-flipped");
+    }
 
-        function drawCard() {
-            const card = document.getElementById('card');
-            const cardImg = document.getElementById('card-img');
-            const cardName = document.getElementById('card-name');
-            const drawBtn = document.getElementById('draw-btn');
-            const statusText = document.getElementById('status-text');
+    function restoreTodayCard() {
+      const lastDrawDate = localStorage.getItem("lastDrawDate");
+      const todayDate = getTodayDateString();
+      const savedIdol = JSON.parse(localStorage.getItem("lastDrawIdol") || "null");
 
-            const todayDate = getTodayDateString();
-            const lastDrawDate = localStorage.getItem('lastDrawDate');
+      if (lastDrawDate === todayDate && savedIdol) {
+        showIdol(savedIdol);
+        drawBtn.disabled = true;
+        statusText.innerText = "你今天已經抽過了，明天再來抽新的小卡。";
+      }
+    }
 
-            if (lastDrawDate === todayDate) {
-                alert("一天只能抽一次喔！");
-                return;
-            }
+    function drawCard() {
+      const todayDate = getTodayDateString();
+      const lastDrawDate = localStorage.getItem("lastDrawDate");
 
-            const randomIndex = Math.floor(Math.random() * idolDatabase.length);
-            const luckyIdol = idolDatabase[randomIndex];
+      if (lastDrawDate === todayDate) {
+        alert("今天已經抽過一次了，明天再來。");
+        return;
+      }
 
-            cardImg.src = luckyIdol.image;
-            cardName.innerText = `今日神仙本命：${luckyIdol.name}`;
+      const luckyIdol = idolDatabase[Math.floor(Math.random() * idolDatabase.length)];
+      showIdol(luckyIdol);
 
-            card.classList.add('is-flipped');
+      localStorage.setItem("lastDrawDate", todayDate);
+      localStorage.setItem("lastDrawIdol", JSON.stringify(luckyIdol));
 
-            localStorage.setItem('lastDrawDate', todayDate);
-            localStorage.setItem('lastDrawIdol', JSON.stringify(luckyIdol));
+      drawBtn.disabled = true;
+      statusText.innerText = "抽卡完成，這就是你今天的小卡。";
+    }
 
-            drawBtn.disabled = true;
-            statusText.innerText = "🎉 抽卡成功！期待你明天的本命運勢！";
-        }
-    </script>
+    drawBtn.addEventListener("click", drawCard);
+    card.addEventListener("click", drawCard);
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        drawCard();
+      }
+    });
 
+    restoreTodayCard();
+  </script>
 </body>
 </html>

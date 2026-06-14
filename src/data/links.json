@@ -1,18 +1,14 @@
 [
   {
-    "label": "YouTube K-POP",
-    "url": "https://www.youtube.com/@Mnet"
-  },
-  {
-    "label": "Instagram 搜尋",
-    "url": "https://www.instagram.com/explore/tags/kpop/"
+    "label": "YT",
+    "url": "https://www.youtube.com/results?search_query=kpop"
   },
   {
     "label": "Weverse",
     "url": "https://weverse.io/"
   },
   {
-    "label": "X K-POP",
+    "label": "X",
     "url": "https://x.com/search?q=kpop"
   }
 ]

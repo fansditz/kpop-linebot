@@ -9,6 +9,20 @@ const links = require("./data/links.json");
 
 const app = express();
 const port = process.env.PORT || 3000;
+const userSessions = new Map();
+
+const DEFAULT_CRAWLER_WEBHOOK_URL = "https://hook.eu1.make.com/xjh78fwmp21u6r226f6w8cq576byorfr";
+
+const MENU = {
+  GIRL_GROUPS: "女團",
+  BOY_GROUPS: "男團",
+  KEYWORD_SEARCH: "關鍵字搜尋",
+  PHOTOCARD: "今日抽卡",
+  COMEBACKS: "回歸日期",
+  LINKS: "其他連結",
+};
+
+const LINE_MANAGER_KEYWORDS = new Set([MENU.GIRL_GROUPS, MENU.BOY_GROUPS]);
 
 app.set("trust proxy", true);
 
@@ -23,9 +37,9 @@ app.use("/card", express.static(path.resolve(__dirname, "../public/card")));
 
 app.get("/", (_req, res) => {
   res.json({
-    name: "韓情脈脈",
+    name: "K-POP LINE Bot",
     status: "ok",
-    features: ["女團", "男團", "關鍵字搜尋", "今日抽卡", "回歸日期", "其他連結"],
+    features: Object.values(MENU),
   });
 });
 
@@ -45,7 +59,8 @@ async function handleEvent(event, req) {
   }
 
   const text = normalize(event.message.text);
-  const reply = buildReply(text, req);
+  const userId = event.source?.userId || event.source?.roomId || event.source?.groupId || "anonymous";
+  const reply = await buildReply(text, req, userId);
 
   if (!reply) {
     return null;
@@ -55,51 +70,59 @@ async function handleEvent(event, req) {
 }
 
 function normalize(text) {
-  return text.trim().replace(/\s+/g, " ");
+  return String(text || "").trim().replace(/\s+/g, " ");
 }
 
-function buildReply(text, req) {
-  if (matches(text, ["女團", "girl", "girls", "女團查詢"])) {
+async function buildReply(text, req, userId) {
+  const session = userSessions.get(userId);
+
+  if (LINE_MANAGER_KEYWORDS.has(text)) {
+    userSessions.delete(userId);
     return null;
   }
 
-  if (matches(text, ["男團", "boy", "boys", "男團查詢"])) {
-    return null;
+  if (session?.mode === "awaiting-keyword") {
+    userSessions.delete(userId);
+    return keywordSearchMessage(text);
   }
 
-  if (matches(text, ["關鍵字搜尋", "搜尋", "查詢", "keyword"])) {
-    return keywordHelpMessage();
+  if (session?.mode === "awaiting-comeback-group") {
+    userSessions.delete(userId);
+    return comebackGroupMessage(text);
   }
 
-  if (matches(text, ["回歸日期", "回歸", "comeback", "韓星回歸"])) {
-    return comebackMessage();
+  if (matches(text, [MENU.KEYWORD_SEARCH, "keyword", "search"])) {
+    userSessions.set(userId, { mode: "awaiting-keyword" });
+    return textMessage("想查詢內容");
   }
 
-  if (matches(text, ["今日抽卡", "抽小卡", "小卡", "抽卡"])) {
+  if (matches(text, [MENU.PHOTOCARD, "photocard", "card"])) {
     return photocardMessage(req);
   }
 
-  if (matches(text, ["其他連結", "連結", "官方連結", "links"])) {
+  if (matches(text, [MENU.COMEBACKS, "comeback", "comebacks", "回歸"])) {
+    return comebackMenuMessage();
+  }
+
+  if (matches(text, ["查詢特定團體"])) {
+    userSessions.set(userId, { mode: "awaiting-comeback-group" });
+    return textMessage("請輸入想查詢的團體名稱");
+  }
+
+  if (matches(text, ["查詢所有團體"])) {
+    return comebackAllMessage();
+  }
+
+  if (matches(text, [MENU.LINKS, "links", "link"])) {
     return linkMessage();
   }
 
-  if (text.startsWith("搜尋 ") || text.startsWith("查詢 ")) {
-    return searchMessage(text.replace(/^(搜尋|查詢)\s*/, ""));
-  }
-
-  const directSearch = searchGroups(text);
-  if (directSearch.length > 0) {
-    return searchMessage(text);
+  const searchKeyword = stripSearchPrefix(text);
+  if (searchKeyword !== text || /^(keyword|search)\s+/i.test(text)) {
+    return keywordSearchMessage(searchKeyword);
   }
 
   return welcomeMessage();
-}
-
-function keywordHelpMessage() {
-  return {
-    type: "text",
-    text: "請輸入「搜尋 + 關鍵字」查詢團體、成員、公司或粉絲名。\n\n搜尋 aespa\n搜尋 Winter\n搜尋 SM Entertainment\n搜尋 CARAT",
-  };
 }
 
 function matches(text, keywords) {
@@ -107,10 +130,18 @@ function matches(text, keywords) {
   return keywords.some((keyword) => lower === keyword.toLowerCase());
 }
 
+function stripSearchPrefix(text) {
+  return text.replace(/^(搜尋|查詢|關鍵字|keyword|search)\s*/i, "").trim();
+}
+
+function textMessage(text) {
+  return { type: "text", text };
+}
+
 function welcomeMessage() {
   return {
     type: "flex",
-    altText: "韓情脈脈主選單",
+    altText: "K-POP 選單",
     contents: {
       type: "bubble",
       size: "mega",
@@ -119,8 +150,8 @@ function welcomeMessage() {
         layout: "vertical",
         spacing: "md",
         contents: [
-          textBox("韓情脈脈", "xxl", true),
-          textBox("選擇想查詢的 K-POP 資訊，或直接輸入團體、成員、公司與粉絲名。", "sm", false),
+          textBox("K-POP 選單", "xl", true),
+          textBox("請點選下方功能，或直接從圖文選單操作。", "sm", false, "#555555"),
           quickMenu(),
         ],
       },
@@ -129,12 +160,11 @@ function welcomeMessage() {
 }
 
 function quickMenu() {
-  const items = ["女團", "男團", "關鍵字搜尋", "今日抽卡", "回歸日期", "其他連結"];
   return {
     type: "box",
     layout: "vertical",
     spacing: "sm",
-    contents: items.map((label) => ({
+    contents: Object.values(MENU).map((label) => ({
       type: "button",
       style: "secondary",
       height: "sm",
@@ -147,50 +177,97 @@ function quickMenu() {
   };
 }
 
-function groupCarousel(category) {
-  const selected = groups.filter((group) => group.category === category);
+async function keywordSearchMessage(keyword) {
+  const cleanKeyword = keyword.trim();
+  if (!cleanKeyword) {
+    return textMessage("想查詢內容");
+  }
 
-  return {
-    type: "flex",
-    altText: category === "girl" ? "女團清單" : "男團清單",
-    contents: {
-      type: "carousel",
-      contents: selected.map(groupBubble),
-    },
-  };
+  const crawlerResult = await crawlWithMake({
+    action: "keyword_search",
+    query: cleanKeyword,
+    keyword: cleanKeyword,
+  });
+
+  if (crawlerResult) {
+    return textMessage(crawlerResult);
+  }
+
+  const matchedGroups = searchGroups(cleanKeyword);
+  const matchedComebacks = searchComebacks(cleanKeyword);
+
+  if (matchedGroups.length === 0 && matchedComebacks.length === 0) {
+    return textMessage(`找不到「${cleanKeyword}」的資料，請換一個關鍵字再試一次。`);
+  }
+
+  return textMessage(formatSearchFallback(cleanKeyword, matchedGroups, matchedComebacks));
 }
 
-function groupBubble(group) {
+function formatSearchFallback(keyword, matchedGroups, matchedComebacks) {
+  const lines = [`「${keyword}」查詢結果`];
+
+  matchedGroups.slice(0, 3).forEach((group) => {
+    lines.push("", `${group.name}${group.koreanName ? `（${group.koreanName}）` : ""}`);
+    lines.push(`公司：${group.company}`);
+    lines.push(`成員：${group.members.join("、")}`);
+    lines.push(`粉絲名：${group.fandom}`);
+  });
+
+  matchedComebacks.slice(0, 5).forEach((item) => {
+    lines.push("", `${item.date} ${item.artist}`);
+    lines.push(`${item.title}（${item.type}）`);
+  });
+
+  return lines.join("\n");
+}
+
+function comebackMenuMessage() {
   return {
-    type: "bubble",
-    size: "kilo",
-    body: {
-      type: "box",
-      layout: "vertical",
-      spacing: "sm",
-      contents: [
-        textBox(group.name, "xl", true),
-        textBox(group.koreanName, "sm", false, "#777777"),
-        separator(),
-        infoRow("出道日期", group.debutDate),
-        infoRow("經紀公司", group.company),
-        infoRow("粉絲名", group.fandom),
-        infoRow("代表色", group.representativeColor),
-        infoRow("MBTI", group.mbti),
-        infoRow("成員", group.members.join("、")),
-      ],
-    },
-    footer: {
-      type: "box",
-      layout: "vertical",
+    type: "flex",
+    altText: "回歸日期",
+    contents: {
+      type: "carousel",
       contents: [
         {
-          type: "button",
-          style: "primary",
-          action: {
-            type: "uri",
-            label: "官方帳號",
-            uri: group.officialUrl,
+          type: "bubble",
+          body: {
+            type: "box",
+            layout: "vertical",
+            spacing: "md",
+            contents: [
+              textBox("查詢特定團體", "xl", true),
+              textBox("輸入團體名稱後，會用 AI 爬蟲查詢該團體回歸日期。", "sm", false, "#555555"),
+              {
+                type: "button",
+                style: "primary",
+                action: {
+                  type: "message",
+                  label: "查詢特定團體",
+                  text: "查詢特定團體",
+                },
+              },
+            ],
+          },
+        },
+        {
+          type: "bubble",
+          body: {
+            type: "box",
+            layout: "vertical",
+            spacing: "md",
+            contents: [
+              textBox("查詢所有團體", "xl", true),
+              textBox("直接用 AI 爬蟲整理所有團體近期回歸日期。", "sm", false, "#555555"),
+              {
+                type: "button",
+                style: "primary",
+                action: {
+                  type: "message",
+                  label: "查詢所有團體",
+                  text: "查詢所有團體",
+                },
+              },
+            ],
           },
         },
       ],
@@ -198,32 +275,132 @@ function groupBubble(group) {
   };
 }
 
-function searchMessage(keyword) {
-  const matchedGroups = searchGroups(keyword);
-  const matchedComebacks = comebacks.filter((item) =>
-    [item.artist, item.title, item.type].some((value) => value.toLowerCase().includes(keyword.toLowerCase())),
-  );
-
-  if (matchedGroups.length === 0 && matchedComebacks.length === 0) {
-    return {
-      type: "text",
-      text: `找不到「${keyword}」的資料，可以換團名、成員名、公司或粉絲名再試一次。`,
-    };
+async function comebackGroupMessage(groupName) {
+  const cleanGroupName = groupName.trim();
+  if (!cleanGroupName) {
+    return textMessage("請輸入想查詢的團體名稱");
   }
 
-  const lines = [`「${keyword}」搜尋結果`];
-  matchedGroups.forEach((group) => {
-    lines.push(`\n${group.name}｜${group.company}`);
-    lines.push(`成員：${group.members.join("、")}`);
-    lines.push(`粉絲名：${group.fandom}`);
+  const crawlerResult = await crawlWithMake({
+    action: "comeback_group",
+    query: cleanGroupName,
+    group: cleanGroupName,
   });
 
-  matchedComebacks.forEach((item) => {
-    lines.push(`\n${item.date} ${item.artist}`);
-    lines.push(`${item.title}｜${item.type}`);
+  if (crawlerResult) {
+    return textMessage(crawlerResult);
+  }
+
+  const matchedComebacks = searchComebacks(cleanGroupName);
+  if (matchedComebacks.length === 0) {
+    return textMessage(`目前找不到「${cleanGroupName}」的回歸日期。`);
+  }
+
+  return textMessage(formatComebacks(`「${cleanGroupName}」回歸日期`, matchedComebacks));
+}
+
+async function comebackAllMessage() {
+  const crawlerResult = await crawlWithMake({
+    action: "comeback_all",
+    query: "查詢所有團體回歸日期",
   });
 
-  return { type: "text", text: lines.join("\n") };
+  if (crawlerResult) {
+    return textMessage(crawlerResult);
+  }
+
+  return textMessage(formatComebacks("近期回歸日期", comebacks));
+}
+
+function formatComebacks(title, items) {
+  const lines = [title];
+  items.slice(0, 10).forEach((item) => {
+    lines.push(`${item.date} ${item.artist} - ${item.title}（${item.type}）`);
+  });
+  return lines.join("\n");
+}
+
+async function crawlWithMake(payload) {
+  const endpoint = crawlerWebhookUrl();
+  if (!endpoint) {
+    return null;
+  }
+
+  try {
+    const postResponse = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        accept: "application/json, text/plain",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (postResponse.ok) {
+      return extractCrawlerText(await readCrawlerResponse(postResponse));
+    }
+
+    console.warn(`Crawler POST failed with status ${postResponse.status}`);
+  } catch (error) {
+    console.warn(`Crawler POST failed: ${error.message}`);
+  }
+
+  try {
+    const query = payload.query || payload.keyword || payload.group || "";
+    const getResponse = await fetch(`${endpoint}?q=${encodeURIComponent(query)}&action=${encodeURIComponent(payload.action)}`, {
+      headers: { accept: "application/json, text/plain" },
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!getResponse.ok) {
+      console.warn(`Crawler GET failed with status ${getResponse.status}`);
+      return null;
+    }
+
+    return extractCrawlerText(await readCrawlerResponse(getResponse));
+  } catch (error) {
+    console.warn(`Crawler GET failed: ${error.message}`);
+    return null;
+  }
+}
+
+function crawlerWebhookUrl() {
+  return normalizeBaseUrl(process.env.KPOP_CRAWLER_WEBHOOK_URL)
+    || normalizeBaseUrl(process.env.KPOP_SEARCH_API_URL)
+    || DEFAULT_CRAWLER_WEBHOOK_URL;
+}
+
+async function readCrawlerResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+  return response.text();
+}
+
+function extractCrawlerText(data) {
+  if (!data) {
+    return null;
+  }
+
+  if (typeof data === "string") {
+    return data.trim() || null;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(extractCrawlerText).filter(Boolean).join("\n") || null;
+  }
+
+  if (Array.isArray(data.results)) {
+    return data.results
+      .slice(0, 5)
+      .map((item) => extractCrawlerText(item))
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  return data.reply || data.message || data.summary || data.text || data.answer || data.result || null;
 }
 
 function searchGroups(keyword) {
@@ -237,56 +414,22 @@ function searchGroups(keyword) {
       group.representativeColor,
       ...group.members,
     ];
-    return values.some((value) => value.toLowerCase().includes(lower));
+    return values.some((value) => String(value || "").toLowerCase().includes(lower));
   });
 }
 
-function comebackMessage() {
-  const monthly = comebacks.filter((item) => item.section === "monthly");
-  const upcoming = comebacks.filter((item) => item.section === "upcoming");
-  const weekly = comebacks.filter((item) => item.section === "weekly");
-
-  return {
-    type: "flex",
-    altText: "回歸日期",
-    contents: {
-      type: "bubble",
-      size: "mega",
-      body: {
-        type: "box",
-        layout: "vertical",
-        spacing: "md",
-        contents: [
-          textBox("回歸日期", "xl", true),
-          comebackSection("本月回歸清單", monthly),
-          comebackSection("即將回歸", upcoming),
-          comebackSection("本週音樂節目", weekly),
-        ],
-      },
-    },
-  };
-}
-
-function comebackSection(title, items) {
-  return {
-    type: "box",
-    layout: "vertical",
-    spacing: "xs",
-    contents: [
-      textBox(title, "md", true),
-      ...items.map((item) => textBox(`${item.date}｜${item.artist} - ${item.title}`, "sm", false, "#555555")),
-    ],
-  };
+function searchComebacks(keyword) {
+  const lower = keyword.toLowerCase();
+  return comebacks.filter((item) =>
+    [item.artist, item.title, item.type, item.date].some((value) => String(value || "").toLowerCase().includes(lower)),
+  );
 }
 
 function photocardMessage(req) {
   const url = cardPageUrl(req);
 
   if (!url) {
-    return {
-      type: "text",
-      text: "今日抽卡需要公開網址才能在 LINE 裡開啟。請先啟動 tunnel，或在 .env 設定 PUBLIC_BASE_URL。",
-    };
+    return textMessage("今日抽卡網站還沒有公開網址，請先設定 PUBLIC_BASE_URL。");
   }
 
   return {
@@ -300,7 +443,7 @@ function photocardMessage(req) {
         spacing: "md",
         contents: [
           textBox("今日抽卡", "xl", true),
-          textBox("點一下按鈕，開啟抽卡網頁。", "sm", false),
+          textBox("點下方按鈕開啟線上抽卡網站。", "sm", false, "#555555"),
           separator(),
           {
             type: "button",
@@ -330,7 +473,8 @@ function cardPageUrl(req) {
     return null;
   }
 
-  const protocol = forwardedProto || (host.includes("trycloudflare.com") || host.includes("loca.lt") ? "https" : req.protocol);
+  const protocol =
+    forwardedProto || (host.includes("trycloudflare.com") || host.includes("loca.lt") ? "https" : req.protocol);
   return `${protocol}://${host}/card/`;
 }
 
@@ -378,31 +522,6 @@ function linkMessage() {
   };
 }
 
-function infoRow(label, value) {
-  return {
-    type: "box",
-    layout: "baseline",
-    spacing: "sm",
-    contents: [
-      {
-        type: "text",
-        text: label,
-        color: "#8A817C",
-        size: "xs",
-        flex: 2,
-      },
-      {
-        type: "text",
-        text: value,
-        color: "#222222",
-        size: "xs",
-        flex: 5,
-        wrap: true,
-      },
-    ],
-  };
-}
-
 function textBox(text, size, bold, color = "#222222") {
   return {
     type: "text",
@@ -423,5 +542,5 @@ function separator() {
 }
 
 app.listen(port, () => {
-  console.log(`韓情脈脈 LINE Bot is running on port ${port}`);
+  console.log(`K-POP LINE Bot is running on port ${port}`);
 });

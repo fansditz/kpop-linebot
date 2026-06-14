@@ -1,38 +1,56 @@
 [
   {
-    "artist": "aespa",
-    "member": "Winter",
-    "color": "#7AA7D9",
-    "message": "今天適合用清爽直球感處理所有待辦。",
-    "selfieIdea": "手拿透明水杯，背景留一點藍色光。",
-    "caption": "soft focus, strong heart.",
-    "imageUrl": "https://dummyimage.com/1200x780/E9EEF5/222222.png&text=WINTER"
+    "artist": "TWICE",
+    "member": "Nayeon",
+    "message": "今天的幸運感是明亮開場，適合把想做的事先推進一步。",
+    "imageUrl": "./image/娜連.jpg"
   },
   {
-    "artist": "IVE",
-    "member": "Wonyoung",
-    "color": "#D88CA8",
-    "message": "今天的關鍵字是自信，鏡頭感直接開滿。",
-    "selfieIdea": "半側臉加手指愛心，色調偏粉。",
-    "caption": "main character mood only.",
-    "imageUrl": "https://dummyimage.com/1200x780/F6E3EB/222222.png&text=WONYOUNG"
+    "artist": "TWICE",
+    "member": "Jeongyeon",
+    "message": "穩穩地做完一件小事，就會比想像中更靠近目標。",
+    "imageUrl": "./image/定延.jpg"
   },
   {
-    "artist": "SEVENTEEN",
-    "member": "Hoshi",
-    "color": "#91C7B1",
-    "message": "今天適合主動一點，幸運會被你叫醒。",
-    "selfieIdea": "比 V 或虎爪手勢，搭配暖色濾鏡。",
-    "caption": "energy up, worries down.",
-    "imageUrl": "https://dummyimage.com/1200x780/E4F3EC/222222.png&text=HOSHI"
+    "artist": "TWICE",
+    "member": "Momo",
+    "message": "今天適合動起來，節奏會把心情帶回正軌。",
+    "imageUrl": "./image/momo.jpeg"
   },
   {
-    "artist": "TXT",
-    "member": "Yeonjun",
-    "color": "#80A8A8",
-    "message": "今天穿搭和靈感都會比平常更有存在感。",
-    "selfieIdea": "鏡子自拍，保留一點街頭感。",
-    "caption": "new day, new frame.",
-    "imageUrl": "https://dummyimage.com/1200x780/E3F1F1/222222.png&text=YEONJUN"
+    "artist": "TWICE",
+    "member": "Sana",
+    "message": "柔軟一點也很好，你的可愛能量今天很有用。",
+    "imageUrl": "./image/sana.jpg"
+  },
+  {
+    "artist": "TWICE",
+    "member": "Jihyo",
+    "message": "把主導權拿回來，今天很適合做一個乾脆的決定。",
+    "imageUrl": "./image/志效.jpg"
+  },
+  {
+    "artist": "TWICE",
+    "member": "Mina",
+    "message": "安靜專注會帶來好結果，照自己的步調就好。",
+    "imageUrl": "./image/mina.jpg"
+  },
+  {
+    "artist": "TWICE",
+    "member": "Dahyun",
+    "message": "今天的關鍵字是輕盈，別忘了給自己一點空白。",
+    "imageUrl": "./image/多賢.jpg"
+  },
+  {
+    "artist": "TWICE",
+    "member": "Chaeyoung",
+    "message": "靈感會在不經意時出現，記得把想法留下來。",
+    "imageUrl": "./image/彩英.jpg"
+  },
+  {
+    "artist": "TWICE",
+    "member": "Tzuyu",
+    "message": "慢慢來也很有力量，今天適合把事情做得漂亮。",
+    "imageUrl": "./image/子瑜.jpg"
   }
 ]
