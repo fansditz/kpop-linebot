@@ -1,44 +1,13 @@
 [
-  {
-    "section": "monthly",
-    "date": "06/03",
-    "artist": "aespa",
-    "title": "Armageddon Special Stage",
-    "type": "Music show"
-  },
-  {
-    "section": "monthly",
-    "date": "06/10",
-    "artist": "IVE",
-    "title": "I AM Tour Live Clip",
-    "type": "Video"
-  },
-  {
-    "section": "monthly",
-    "date": "06/17",
-    "artist": "SEVENTEEN",
-    "title": "Unit Single",
-    "type": "Digital single"
-  },
-  {
-    "section": "upcoming",
-    "date": "06/24",
-    "artist": "TXT",
-    "title": "The Star Chapter",
-    "type": "Mini album"
-  },
-  {
-    "section": "upcoming",
-    "date": "06/28",
-    "artist": "LE SSERAFIM",
-    "title": "Hot Summer Remix",
-    "type": "Single"
-  },
-  {
-    "section": "weekly",
-    "date": "本週",
-    "artist": "RIIZE",
-    "title": "Performance Video",
-    "type": "YouTube"
-  }
+  { "date": "6/1", "artist": "TREASURE", "title": "正規回歸", "type": "回歸" },
+  { "date": "6/4", "artist": "MAMAMOO", "title": "4WARD", "type": "回歸" },
+  { "date": "6/10", "artist": "JAY B", "title": "T.R.E.E", "type": "SOLO回歸" },
+  { "date": "6/15", "artist": "RIIZE", "title": "第二張迷你專輯《Ⅱ》", "type": "回歸" },
+  { "date": "6/22", "artist": "Hearts2Hearts", "title": "Lemon Tang", "type": "回歸" },
+  { "date": "6月", "artist": "BOYNEXTDOOR", "title": "日期未公開", "type": "回歸" },
+  { "date": "6月", "artist": "ONF", "title": "日期未公開", "type": "回歸" },
+  { "date": "6月", "artist": "EPEX", "title": "日期未公開", "type": "回歸" },
+  { "date": "6月", "artist": "ATEEZ", "title": "回歸預告", "type": "回歸" },
+  { "date": "6月", "artist": "STAYC", "title": "回歸預告", "type": "回歸" },
+  { "date": "6月", "artist": "BABYMONSTER", "title": "回歸預告", "type": "回歸" }
 ]

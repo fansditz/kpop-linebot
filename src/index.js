@@ -101,7 +101,9 @@ async function buildReply(text, req, userId) {
   }
 
   if (matches(text, [MENU.COMEBACKS, "comeback", "comebacks", "回歸"])) {
-    return comebackMenuMessage();
+  return comebackAllMessage();
+  }
+  
   }
 
   if (matches(text, ["查詢特定團體"])) {
@@ -300,16 +302,7 @@ async function comebackGroupMessage(groupName) {
 }
 
 async function comebackAllMessage() {
-  const crawlerResult = await crawlWithMake({
-    action: "comeback_all",
-    query: "查詢所有團體回歸日期",
-  });
-
-  if (crawlerResult) {
-    return textMessage(crawlerResult);
-  }
-
-  return textMessage(formatComebacks("近期回歸日期", comebacks));
+  return textMessage(formatComebacks("2026年6、7月近期回歸資訊", comebacks));
 }
 
 function formatComebacks(title, items) {
