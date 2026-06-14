@@ -93,7 +93,7 @@ async function buildReply(text, req, userId) {
 
   if (matches(text, [MENU.KEYWORD_SEARCH, "keyword", "search"])) {
     userSessions.set(userId, { mode: "awaiting-keyword" });
-    return textMessage("想查詢內容");
+    return textMessage("想查詢什麼呢？");
   }
 
   if (matches(text, [MENU.PHOTOCARD, "photocard", "card"])) {
@@ -118,9 +118,6 @@ async function buildReply(text, req, userId) {
   if (searchKeyword !== text || /^(keyword|search)\s+/i.test(text)) {
     return keywordSearchMessage(searchKeyword);
   }
-
-  return welcomeMessage();
-}
 
 function matches(text, keywords) {
   const lower = text.toLowerCase();
